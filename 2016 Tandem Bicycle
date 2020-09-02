@@ -1,0 +1,47 @@
+package com.company;
+import java.util.Scanner;
+import java.util.Stack;
+import java.util.Arrays;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner kb = new Scanner(System.in);
+        int qType = Integer.parseInt(kb.nextLine());
+        int N = Integer.parseInt(kb.nextLine());
+	    String[] dmoChar = kb.nextLine().split(" ");
+	    String[] pegChar = kb.nextLine().split(" ");
+	    int[] dmo = new int[N];
+	    int[] peg = new int[N];
+
+	    for (int i = 0; i < N; i++){
+            dmo[i] = Integer.parseInt(dmoChar[i]);
+        }
+
+	    for (int i = 0; i < N; i++){
+	        peg[i] = Integer.parseInt(pegChar[i]);
+        }
+
+	    Arrays.sort(dmo);
+	    Arrays.sort(peg);
+	    Stack<Integer> dmoStack = new Stack<Integer>();
+	    Stack<Integer> pegStack = new Stack<Integer>();
+	    int total = 0;
+
+        for (int i = 0; i < N; i++){
+            dmoStack.add(dmo[N-i-1]);
+            pegStack.add(peg[N-i-1]);
+        }
+
+	    if (qType == 1){
+            for (int i = 0; i < N; i++){
+                total = total + Math.max(dmoStack.remove(0), pegStack.remove(0));
+            }
+        }else{
+	        for (int i = 0; i < N; i++){
+	            total = total + Math.max(dmoStack.remove(0), pegStack.remove(N-i-1));
+            }
+        }
+
+        System.out.println(total);
+    }
+}
