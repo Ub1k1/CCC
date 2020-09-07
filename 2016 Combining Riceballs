@@ -1,65 +1,78 @@
 package com.company;
 import java.util.Scanner;
-import java.util.LinkedList;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner kb = new Scanner(System.in);
-	    int N = Integer.parseInt(kb.nextLine());
-	    String[] input = kb.nextLine().split(" ");
-	    LinkedList<Integer> riceballs = new LinkedList<Integer>();
+    static byte[][] twod;
+    static int[] riceballs;
 
-	    for (int i = 0; i < N; i++){
-            riceballs.addLast(Integer.parseInt(input[i]));
+    static int canComb(int i, int j){
+
+        if (i >= j){
+            return 1;
         }
 
-	    int largest = 0;
+        if (twod[i][j] != 0){
+            return twod[i][j];
+        }
 
-	    for(int i = 0; i < riceballs.size() - 1; i++){
-			if (i < riceballs.size() - 2 && riceballs.get(i) == riceballs.get(i+2)){
-				int temp = 2*riceballs.get(i) + riceballs.get(i+1);
-				riceballs.add(i, temp);
-				riceballs.remove(i+1);
-				riceballs.remove(i+1);
-				riceballs.remove(i+1);
-
-				if (i > 1) {
-					i = i - 2;
-				}else if (i > 0){
-					i = i - 1;
-				}
-
-				if (temp > largest){
-					largest = temp;
-				}
-			}
-
-	        if (riceballs.get(i) == riceballs.get(i+1)){
-	            int temp = 2*riceballs.get(i);
-	            riceballs.add(i, temp);
-	            riceballs.remove(i+1);
-	            riceballs.remove(i+1);
-
-	            if (i > 1) {
-					i = i - 2;
-				}else if (i > 0){
-	            	i = i - 1;
-				}
-
-	            if (temp > largest){
-	                largest = temp;
+        int a = i;
+        int b = j;
+        int leftSum = riceballs[i];
+        int rightSum = riceballs[j];
+        while (a < b){
+            if (leftSum == rightSum){
+                if (canComb(i, a) == 1 && canComb(a+1, b-1) == 1 && canComb(b, j) == 1){
+                    twod[i][j] = 1;
+                    return 1;
                 }
+                a++;
+                b--;
+                leftSum = leftSum + riceballs[a];
+                rightSum = rightSum + riceballs[b];
+            } else if (leftSum < rightSum){
+                a++;
+                leftSum = leftSum + riceballs[a];
+            }
+            else{
+                b--;
+                rightSum = rightSum + riceballs[b];
             }
         }
 
-	    if (largest == 0){
-	    	for (int i = 0; i < riceballs.size(); i++){
-	    		if (riceballs.get(i) > largest){
-	    			largest = riceballs.get(i);
-				}
-			}
-		}
+        twod[i][j] = -1;
+        return -1;
+    }
 
-        System.out.println(largest);
+    public static void main(String[] args) {
+        Scanner kb = new Scanner(System.in);
+	    int N = Integer.parseInt(kb.nextLine());
+	    twod = new byte[N][N];
+	    String[] input = kb.nextLine().split(" ");
+	    riceballs = new int[N];
+
+	    for (int i = 0; i < N; i++){
+            riceballs[i] = Integer.parseInt(input[i]);
+        }
+
+	    int biggest;
+	    int bOfBs = -1;
+
+	    for (int i = 0; i < N; i++){
+	        biggest = -1;
+	        int sum = 0;
+	        for (int j = i; j < N; j++){
+	            sum = sum + riceballs[j];
+	            if (canComb(i, j) == 1){
+	                if (sum > biggest){
+	                    biggest = sum;
+                    }
+                }
+            }
+	        if (biggest > bOfBs){
+	            bOfBs = biggest;
+            }
+        }
+
+        System.out.println(bOfBs);
     }
 }
